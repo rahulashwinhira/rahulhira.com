@@ -1,16 +1,15 @@
-# Rahul Hira — A little room
+# A little room
 
-An interactive, original 3D room concept for Rahul’s personal portfolio, inspired by the tactile objects in Underfoot. It uses Three.js for rendering and Cannon-es for rigid-body physics. No assets or source code from Underfoot are distributed here.
+An original, wordless 3D room concept for Rahul Hira. Three.js renders the room and Cannon-es simulates its six loose desk objects. All models and textures are generated locally.
 
 ## Explore
 
-- Drag empty space to orbit through 360 degrees; scroll or pinch to zoom.
-- Drag a loose desk object to lift it with a spring; release to drop or toss it.
-- Click the laptop for Work, notebook for Notes, phone for About, or lamp to switch the light.
-- Room and Desk move between camera views. Tidy up restores all props.
-- Keyboard: focus the scene, then use arrows to orbit and +/− to zoom. R resets props, L toggles the lamp, and Esc closes details. Navigation buttons provide direct access to every portfolio panel.
+- Press a loose desk object to lift it, drag to move it, and release to drop or toss it.
+- Drag empty space to orbit; scroll or pinch to zoom.
+- Four icon buttons show the whole room, move closer to the desk, reset objects, and toggle the lamp. The lamp itself also toggles when clicked.
+- Keyboard: focus the scene and use arrows to orbit, plus/minus to zoom, R to reset, L for the lamp, and Escape to release an object.
 
-The content is deliberately small: a GitHub link and a few concept panels. The notebook is explicitly empty; no fictional resume or projects are included.
+There is no visible text: no headings, labels, tooltips, portfolio panels, or lettering on the objects. Icon buttons and the canvas retain invisible accessible descriptions. Furniture is fixed; the notebook, mug, ball, phone, pencil, and die are movable.
 
 ## Run locally
 
@@ -25,16 +24,18 @@ npm run build
 npm run preview
 ```
 
-`dist/` is a static site; it can be served at a domain root or under a subdirectory.
+`dist/` is a static site that supports root or subdirectory hosting.
 
-## Performance
+## Physics and rendering
 
-Six dynamic bodies, primitive collision shapes, a 120 Hz fixed physics step with a bounded catch-up, mass-scaled spring dragging, and body sleeping. Rendering stops when objects and the camera settle, and pauses when the tab is hidden. Device resolution is capped, static meshes are merged by material, and only one light casts a shadow. All textures and models are generated locally, so there are no external model downloads or tracking services.
+The simulation uses a 120 Hz fixed step, bounded catch-up, mass-scaled spring dragging, velocity limits, and sleeping. Rendering stops when objects and the camera settle, and pauses when hidden. Resolution is capped, static meshes are merged by material, and only one light casts shadows.
+
+Cannon quaternions must be interpolated within Cannon before copying to Three. Passing a Cannon quaternion directly to Three's `slerp` yields non-finite render transforms, which previously corrupted ray hits and object dragging. Invalid grab points are now rejected and non-finite body states recover safely. Pointer capture is cleared without recursive release, and pickup starts immediately on pointer down.
 
 ## Verification
 
-Physics tests cover falling onto the desk, stacking, consistent simulation at different render rates, dragging/release, and reset. Browser checks cover a 391 × 844 layout, desktop orbit, zoom presets, object dragging, lamp and laptop interactions, details panels, and idle rendering. Mobile layout was checked with browser viewport emulation, not a physical phone.
+Eight automated tests cover desk/floor collisions, stacking, frame-rate independence, pickup/release, reset, finite rendered transforms and ray hits, repeated edge grabs of thin props, and invalid-coordinate recovery. Browser checks cover dragging, dropping, camera controls, lamp controls, wordless presentation, and a narrow viewport. Narrow-screen checks use browser emulation rather than a physical phone.
 
-## Preview and publication
+## Publication
 
-This is a design prototype. The private preview is hosted separately; the existing public `rahulhira.com` homepage stays on `main`. This branch does not change domain DNS or GitHub Pages settings. To publish this Vite application on GitHub Pages later, deploy the built `dist/` output through a Pages workflow and retain the custom domain.
+This prototype has its own hosted Site. Source is also kept in `room-prototype/` on the `codex/room-portfolio` branch of the personal GitHub repository. The public domain homepage remains on `main`.
