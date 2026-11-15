@@ -28,13 +28,13 @@ npm run preview
 
 ## Physics and rendering
 
-The simulation uses a 120 Hz fixed step, bounded catch-up, mass-scaled spring dragging, velocity limits, and sleeping. Rendering stops when objects and the camera settle, and pauses when hidden. Resolution is capped, static meshes are merged by material, and only one light casts shadows.
+The simulation uses a 120 Hz fixed step, bounded catch-up, mass-scaled spring dragging through the centre of mass, velocity limits, and sleeping. Held objects keep their picked orientation while moving along a level plane; release restores normal rotational physics. Rendering stops when objects and the camera settle, and pauses when hidden. Resolution is capped, static meshes are merged by material, and only one light casts shadows.
 
 Cannon quaternions must be interpolated within Cannon before copying to Three. Passing a Cannon quaternion directly to Three's `slerp` yields non-finite render transforms, which previously corrupted ray hits and object dragging. Invalid grab points are now rejected and non-finite body states recover safely. Pointer capture is cleared without recursive release, and pickup starts immediately on pointer down.
 
 ## Verification
 
-Eight automated tests cover desk/floor collisions, stacking, frame-rate independence, pickup/release, reset, finite rendered transforms and ray hits, repeated edge grabs of thin props, and invalid-coordinate recovery. Browser checks cover dragging, dropping, camera controls, lamp controls, wordless presentation, and a narrow viewport. Narrow-screen checks use browser emulation rather than a physical phone.
+Ten automated tests cover desk/floor collisions, stacking, frame-rate independence, pickup/release, reset, finite rendered transforms and ray hits, repeated edge grabs of thin props, and invalid-coordinate recovery, steady orientation during edge grabs and collisions, and rotation restoration on release. Browser checks cover dragging, dropping, camera controls, lamp controls, wordless presentation, and a narrow viewport. Narrow-screen checks use browser emulation rather than a physical phone.
 
 ## Publication
 

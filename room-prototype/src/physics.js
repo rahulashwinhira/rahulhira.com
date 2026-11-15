@@ -23,14 +23,22 @@ export class RoomPhysics {
   }
   startDrag(body,point){
     if(!this.bodies.includes(body)||!finiteVector(point))return false;
-    this.endDrag();const anchor=new CANNON.Body({mass:0,collisionFilterGroup:0,collisionFilterMask:0});anchor.position.set(point.x,point.y,point.z);
-    const local=body.pointToLocalFrame(new CANNON.Vec3(point.x,point.y,point.z));
-    // Mass-scaled, near critically damped spring: responsive without teleporting through furniture.
-    const spring=new CANNON.Spring(anchor,body,{restLength:0,stiffness:body.mass*200,damping:body.mass*22,localAnchorB:local});
-    body.wakeUp();this.drag={body,anchor,spring};return true;
+    this.endDrag();
+    const offset=new CANNON.Vec3(point.x-body.position.x,point.y-body.position.y,point.z-body.position.z);
+    const anchor=new CANNON.Body({mass:0,collisionFilterGroup:0,collisionFilterMask:0});anchor.position.copy(body.position);
+    // Pull through the centre of mass. Preserve the picked pose while held;
+    // an edge grab must not act like a pendulum or accumulate collision torque.
+    const fixedRotation=body.fixedRotation;body.fixedRotation=true;body.angularVelocity.setZero();body.torque.setZero();body.updateMassProperties();
+    const spring=new CANNON.Spring(anchor,body,{restLength:0,stiffness:body.mass*200,damping:body.mass*28});
+    body.wakeUp();this.drag={body,anchor,spring,offset,fixedRotation};return true;
   }
-  moveDrag(point){if(this.drag&&finiteVector(point))this.drag.anchor.position.set(point.x,point.y,point.z);}
-  endDrag(){if(this.drag){const b=this.drag.body;const speed=b.velocity.length();if(speed>7)b.velocity.scale(7/speed,b.velocity);b.wakeUp();this.drag=null;}}
+  moveDrag(point){if(this.drag&&finiteVector(point)){const {anchor,offset}=this.drag;anchor.position.set(point.x-offset.x,point.y-offset.y,point.z-offset.z);}}
+  endDrag(){
+    if(!this.drag)return;
+    const {body:b,fixedRotation}=this.drag;this.drag=null;
+    b.fixedRotation=fixedRotation;b.angularVelocity.setZero();b.torque.setZero();b.updateMassProperties();
+    const speed=b.velocity.length();if(speed>4)b.velocity.scale(4/speed,b.velocity);b.wakeUp();
+  }
   resetBody(b){if(this.drag?.body===b)this.endDrag();b.position.copy(b.home.pos);b.quaternion.copy(b.home.quat);b.previousPosition.copy(b.position);b.interpolatedPosition.copy(b.position);b.previousQuaternion.copy(b.quaternion);b.interpolatedQuaternion.copy(b.quaternion);b.velocity.setZero();b.angularVelocity.setZero();b.force.setZero();b.torque.setZero();b.aabbNeedsUpdate=true;b.updateInertiaWorld(true);b.wakeUp();this.syncBody(b,true);}
   reset(){this.endDrag();this.accumulator=0;for(const b of this.bodies)this.resetBody(b);}
   step(dt){

@@ -65,3 +65,23 @@ test('invalid grab coordinates cannot poison the scene and damaged bodies recove
  b.position.x=NaN;p.step(1/60);assert.equal(p.drag,null);assert.ok(b.position.toArray().every(Number.isFinite));
  p.step(NaN);p.step(-1);assert.ok(b.position.toArray().every(Number.isFinite));
 });
+
+test('off-centre pickup keeps orientation steady through dragging and collisions',()=>{
+ for(const size of [[.5,.07,.36],[.53,.028,.028],[.2,.2,.2]]){
+  const p=new RoomPhysics([floor,{size:[.3,3,3],pos:[1.1,1.5,0]}],[{...cube('held',[0,.5,0]),size,rotation:[.12,.35,-.08]}]);
+  const b=p.bodies[0],q=b.quaternion.clone();b.angularVelocity.set(2,-4,1);
+  p.startDrag(b,b.pointToWorldFrame({x:size[0]*.45,y:size[1]/2,z:0}));
+  for(let i=0;i<240;i++){
+   p.moveDrag({x:Math.sin(i/22)*1.2,y:1.3,z:Math.cos(i/31)*.5});p.step(1/60);
+   const dot=Math.abs(q.x*b.quaternion.x+q.y*b.quaternion.y+q.z*b.quaternion.z+q.w*b.quaternion.w);
+   assert.ok(dot>.99999,'held orientation must not spin');assert.ok(b.angularVelocity.length()<.0001);
+  }
+  p.endDrag();assert.equal(b.fixedRotation,false);
+  b.torque.set(.4,.3,.2);p.step(1/60);assert.ok(b.angularVelocity.length()>.01,'rotation resumes after release');
+ }
+});
+test('releasing or resetting a held body restores its original rotation setting',()=>{
+ const p=new RoomPhysics([floor],[cube('cube',[0,1,0])]);const b=p.bodies[0];
+ b.fixedRotation=true;b.updateMassProperties();p.startDrag(b,b.position);p.endDrag();assert.equal(b.fixedRotation,true);
+ b.fixedRotation=false;b.updateMassProperties();p.startDrag(b,b.position);p.reset();assert.equal(b.fixedRotation,false);assert.equal(b.angularVelocity.length(),0);
+});

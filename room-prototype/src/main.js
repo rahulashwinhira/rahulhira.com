@@ -50,7 +50,7 @@ function start(){
     const begin=performance.now();const awake=physics.step(dt);physicsMs=performance.now()-begin;
     if(transition){const t=Math.min(1,(now-transition.start)/850),ease=1-Math.pow(1-t,3);camera.position.lerpVectors(transition.from,transition.position,ease);controls.target.lerpVectors(transition.targetFrom,transition.target,ease);if(t===1)transition=null;}
     const changed=dragging?false:controls.update();
-    if(physics.drag){const b=physics.drag.body;grabs[b.name].peakLift=Math.max(grabs[b.name].peakLift,b.position.y-pending.startY);}
+    if(physics.drag){const b=physics.drag.body;grabs[b.name].peakLift=Math.max(grabs[b.name].peakLift,b.position.y-pending.startY);grabs[b.name].peakSpin=Math.max(grabs[b.name].peakSpin,b.angularVelocity.length());}
     // Cutaway walls disappear when viewed from outside, so orbit works all the way around.
     room.backWall.visible=camera.position.z>-2.5;room.leftWall.visible=camera.position.x>-3.1;
     const renderStart=performance.now();renderer.render(scene,camera);renderMs=performance.now()-renderStart;frameCount++;
@@ -64,7 +64,7 @@ function start(){
   function moveHeld(event){
     locate(event);
     if(raycaster.ray.intersectPlane(dragPlane,hitPoint)){
-      hitPoint.y=THREE.MathUtils.clamp(hitPoint.y+.48,pending.point.y+.32,3.8);
+      hitPoint.y=Math.min(pending.point.y+.48,3.8);
       hitPoint.x=THREE.MathUtils.clamp(hitPoint.x,-2.8,2.85);hitPoint.z=THREE.MathUtils.clamp(hitPoint.z,-2.2,2.3);
       physics.moveDrag(hitPoint);
     }
@@ -77,10 +77,10 @@ function start(){
     pending={...hit,id:event.pointerId,x:event.clientX,y:event.clientY,moved:false,startY:hit.item.body?.position.y};
     if(hit.item.body){
       event.preventDefault();event.stopImmediatePropagation();controls.enabled=false;
-      camera.getWorldDirection(normal);dragPlane.setFromNormalAndCoplanarPoint(normal,pending.point);
+      normal.set(0,1,0);dragPlane.setFromNormalAndCoplanarPoint(normal,pending.point);
       if(!physics.startDrag(hit.item.body,pending.point)){pending=null;controls.enabled=true;return;}
       dragging=true;canvas.style.cursor='grabbing';canvas.setPointerCapture(event.pointerId);
-      const name=hit.item.body.name;grabs[name]={count:(grabs[name]?.count??0)+1,peakLift:0};lastGrab=name;
+      const name=hit.item.body.name;grabs[name]={count:(grabs[name]?.count??0)+1,peakLift:0,peakSpin:0};lastGrab=name;
       moveHeld(event);
     }
   },true);
