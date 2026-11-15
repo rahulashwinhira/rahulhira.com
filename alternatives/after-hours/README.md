@@ -1,13 +1,15 @@
-# Rahul Hira — After Hours
+# Rahul Hira
 
-A minimal white-text portfolio with three separate atmospheres in one layout:
+A small personal letter on a black background, with white serif text. The introduction, paragraphs, links, and sign-off share one type size and weight. There are no oversized headings, captions, branding labels, drawers, or background illustrations. The single-column spacing is based on the supplied guptasf.com reference; copy and cursor effects are original.
 
-- **Moonlight:** a textured lunar crescent, a few stars, and a faint constellation.
-- **Tide:** fine contour-like water lines with slow changes in light and motion.
-- **Ember:** warm charcoal, a low glow, and a few rising sparks.
+Three icon buttons in the bottom corner select cursor effects:
 
-A brief personal introduction leads to inline Work, Writing, and About notes. The theme picker works with pointer or keyboard and remembers the last selection locally. Theme effects respond subtly to link focus or hover. Motion can be paused and respects reduced-motion preferences; hidden tabs stop rendering.
+- Starlight: fine silver trails and tiny stars.
+- Water: flowing pale blue strands.
+- Ember: warm sparks with inertia and gravity.
 
-Inspired by the direct, personal prose and restrained layout of guptasf.com. All styling, effects, artwork, and copy here are original for Rahul. No rainbow or bubble effects are used.
+The cursor responds to movement, changes shape over links, and emits a burst on click. Effects fade and stop rendering when idle, disappear on touch, and respect reduced-motion preferences. Theme selection persists locally and via `?theme=moonlight`, `?theme=tide`, or `?theme=ember`.
 
-This is a buildless static site. Serve `dist/` with `python3 -m http.server 4175 --directory dist`. It uses no package dependencies, external fonts, image downloads, or trackers. The background is procedural Canvas 2D with a capped drawing resolution; portfolio content stays usable without the canvas.
+The two inline links lead directly to Rahul’s illustrated essay and GitHub profile. There are no dependencies, external fonts, image assets, trackers, or build steps. Serve `dist/` with `python3 -m http.server 4175 --directory dist`.
+
+Validation: JavaScript syntax check plus desktop and narrow-screen browser checks for consistent typography, cursor movement, all three effects, theme persistence, link targets, and idle rendering.

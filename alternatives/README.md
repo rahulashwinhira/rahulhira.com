@@ -3,7 +3,7 @@
 Two independent directions for Rahul Hira’s personal website.
 
 - **Painted Garden**: a 3D landscape using the brushwork from Rahul’s Intelligence Age essay, with clickable flowers, stones, and a water lily.
-- **After Hours**: a minimal personal page in white type, with Moonlight, Tide, and Ember atmospheres.
+- **After Hours**: a plain personal letter in one size of white type, with Starlight, Water, and Ember cursor effects.
 
 Private previews (ChatGPT sign-in):
 
