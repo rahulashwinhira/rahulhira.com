@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#bdcdbd">
+    <meta name="description" content="A painted studio in a meadow.">
+    <title>◌</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233c493b'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%23f3ecd9'/%3E%3C/svg%3E">
+  </head>
+  <body>
+    <main id="room" aria-label="Interactive painted studio">
+      <canvas id="scene" tabindex="0" aria-label="Drag a desk object to pick it up, then release to drop it. Drag empty space to orbit, scroll or pinch to zoom. Arrow keys orbit; plus and minus zoom; R resets; L toggles the lamp."></canvas>
+      <div class="view-controls" role="group" aria-label="Room controls">
+        <button id="view-room" class="selected" aria-label="View whole studio" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5v9l-9 5-9-5V8Zm0 10L3 8m9 5 9-5m-9 5v9m0-19v10"/></svg></button>
+        <button id="view-desk" aria-label="Look closer at the desk" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11h18M5 11v10m14-10v10M7 3h10v8H7Z"/></svg></button>
+        <button id="reset" aria-label="Put everything back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg></button>
+        <button id="light" aria-label="Toggle the lamp" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8l4 10H4Zm4 10v8m-4 0h8"/></svg></button>
+      </div>
+      <div id="loading" aria-label="Loading room"><span class="loading-orbit"></span></div>
+      <div id="fallback" hidden><svg viewBox="0 0 24 24" role="img" aria-label="3D graphics unavailable"><path d="m12 3 9 5v9l-9 5-9-5V8Zm0 10L3 8m9 5 9-5m-9 5v9"/></svg></div>
+      <output id="diagnostics" hidden></output>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
